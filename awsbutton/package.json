@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "Interfaces an Amazon AWS IoT button with event driven QoS",
   "main": "lambda.js",
-  "devDependencies": {
-    "aws-sdk": "^2.65.0"
+  "dependencies": {
+    "request": "^2.81.0"
   },
-  "dependencies": {},
   "author": "Steven Luzynski (sluzynsk@cisco.com)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "aws-sdk": "^2.66.0",
+    "grunt": "^1.0.1",
+    "grunt-aws-lambda": "^0.13.0"
+  },
+  "repository": "https://github.com/sluzynsk/edqos_plugins"
 }

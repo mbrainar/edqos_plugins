@@ -6,6 +6,7 @@ var AWS = require('aws-sdk');
 
 let tag = "test";
 let application = "amazon-instant-video";
+let paramroot = "policy=test&app=amazon-instant-video&relevance=";
 
 exports.handler = (event, context, callback) => {
     // Load the message passed into the Lambda function into a JSON object
@@ -20,15 +21,32 @@ exports.handler = (event, context, callback) => {
         console.log("Single click detected. Setting amazon-instant-video to relevant in ed-qos policy.");
         let xhr = new XMLHttpRequest();
 
-        xhr.open('POST', url);
+        var params = paramroot + "Business-Relevant";
+        xhr.open('POST', url, true);
         xhr.onreadystatechange=handler;
         xhr.responsetype='json';
-        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded')
-
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send(params);
 
     } else if (event.clickType == "DOUBLE") {
         console.log("Double click detected. Setting amazon-instant-video to irrelevant in ed-qos policy.");
+        let xhr = new XMLHttpRequest();
 
+        var params = paramroot + "Business-Irrelevant";
+        xhr.open('POST', url, true);
+        xhr.onreadystatechange=handler;
+        xhr.responsetype='json';
+        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        xhr.send(params);
     }
-    callback(null, "The button was pressed, and some things happened.")
-};  
+    function handler() {
+      if (this.readyState == this.DONE ) {
+        if (this.status == 200) {
+          callback(null, "The button was pressed, and some things happened.");
+        } else {
+          callback(1, "The button was pressed, and no things happened. Sorry man.");
+        }
+      }
+    }
+
+};

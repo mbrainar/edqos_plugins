@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Interfaces an Amazon AWS IoT button with event driven QoS",
   "main": "lambda.js",
-  "dependencies": {
+  "devDependencies": {
     "aws-sdk": "^2.65.0"
   },
-  "devDependencies": {},
+  "dependencies": {},
   "author": "Steven Luzynski (sluzynsk@cisco.com)",
   "license": "MIT"
 }

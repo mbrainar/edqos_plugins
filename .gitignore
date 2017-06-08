@@ -99,3 +99,6 @@ drone_secrets.yml
 
 # Node.js - don't commit to the repo that which can be re-downloaded
 node_modules/
+
+# secrets
+secrets.json

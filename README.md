@@ -40,7 +40,7 @@ repeatedly is useful.
 
 Three environment variables are required in the console for the function to operate.
 
-![environment](doc/environment.png "Environment variables")
+![environment](awsbutton/doc/environment.png "Environment variables")
 
 * The application variable is the name of the app to control with your button. It
 must be spelled the same way that the APIC-EM has it spelled.
@@ -54,7 +54,7 @@ app contains installation instructions.
 
 The configuration tab for the function should use the Node.js 6.x runtime. The handler function name is index.handler.
 
-![configuration](doc/configuration.png "Configuration tab")
+![configuration](awsbutton/doc/configuration.png "Configuration tab")
 
 #### Button configuration
 

@@ -6,7 +6,8 @@ var AWS = require('aws-sdk');
 var request = require('request');
 
 let tag = process.env.tag;
-let application = process.env.application
+let application = process.env.application;
+let url = process.env.url;
 var headers = {
     'Content-Type':     'application/x-www-form-urlencoded'
 }
@@ -16,7 +17,6 @@ exports.handler = (event, context, callback) => {
     // Load the message passed into the Lambda function into a JSON object
     var eventText = JSON.stringify(event, null, 2);
     var messageText = "Received  " + event.clickType + " message from button ID: " + event.serialNumber;
-    let url = "http://demoapp.rumrunner.io:5001/api/relevance";
 
     // Write the string to the console
     console.log("Message to send: " + messageText);

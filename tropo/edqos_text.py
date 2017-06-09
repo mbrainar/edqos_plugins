@@ -25,6 +25,20 @@ def get_relevance(app_name, policy_scope):
         if r.status_code == 200:
             return r.text
 
+def set_relevance(app_name, policy_scope, target_relevance):
+    valid_relevance = ["Business-Relevant", "Default", "Business-Irrelevant"]
+    if not app_name:
+        return "Missing search string"
+    elif not policy_scope:
+        return "Missing policy tag"
+    elif target_relevance not in valid_relevance:
+        return "Invalid or missing target relevance"
+    else:
+        payload = "app={}&policy={}&relevance={}".format(app_name, policy_scope, target_relevance)
+        r = requests.post(app_url+"/api/relevance/", data=payload)
+        if r.status_code == 200
+            return r.json()
+
 # Welcome message
 print("Welcome to the Event Driven QoS Tropo Plugin")
 # say("Welcome to the Event Driven QoS Tropo Plugin")
@@ -50,11 +64,29 @@ while True:
 
 # Ask for application search string
 app_search = input("What application do you wish to modify?")
+# Can ask() support open-ended SMS responses?
+# app_search = ask("What application do you wish to modify?")
 
 app_names = get_applications(app_search)
 if len(app_names) == 1:
     print("{} is currently listed as {}".format(app_names[0], get_relevance(app_names[0], policy_scope)))
     # say("{} is currently listed as {}".format(app_names[0], get_relevance(app_names[0], policy_scope)))
-else:
+elif len(app_names) > 1:
     app_string = ', '.join(app_names)
+    while True:
+        app_name = input("Multiple applications matched your search. Which app would you like to modify? Chose: "+app_string)
+        # app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
+        #                "choices":app_string)
+
+        if app_name not in app_names:
+            print("Application name is not valid")
+            # say("Application name is not valid")
+        else:
+            break
+
+    print("{} is currently listed as {}".format(app_name, get_relevance(app_name, policy_scope)))
+    # say("{} is currently listed as {}".format(app_name, get_relevance(app_name, policy_scope)))
+else:
+    print("Sorry, no applications matched your search")
+    # say("Sorry, no applications matched your search")
 

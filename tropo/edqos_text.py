@@ -54,9 +54,14 @@ def set_relevance(app_name, policy_scope, target_relevance):
 
 
 def main():
-    # Welcome message
-    print("Welcome to the Event Driven QoS Tropo Plugin")
-    say("Welcome to the Event Driven QoS Tropo Plugin") if tropo is True else None
+    if tropo is True:
+        if len(currentCall.initialText) > 0:
+            # Welcome message
+            say("Welcome to the Event Driven QoS Tropo Plugin")
+        else:
+            sys.exit("No incoming message")
+    else:
+        print("Welcome to the Event Driven QoS Tropo Plugin")
 
     # Get policy tags
     policy_tags = get_policy_tags()
@@ -85,7 +90,7 @@ def main():
 
     # Ask for application search string
     # todo Can ask() support open-ended SMS responses?
-    if policy_scope not in policy_tags:
+    if tropo is True:
         app_search = ask("What application do you wish to modify?", {
                          "choices":"[ANY]",
                          "timeout":30.0})

@@ -64,7 +64,8 @@ def main():
         # Ask what policy tag to use
         policy_scope = input("What Policy Tag should we use? Chose: "+policy_string)
         # policy_scope = ask("What Policy Tag should we use? Chose: "+policy_string, {
-        #                    "choices":policy_string})
+        #                    "choices":policy_string,
+        #                    "timeout":30.0})
 
         if policy_scope not in policy_tags:
             print("Policy scope provided is not valid")
@@ -75,7 +76,9 @@ def main():
     # Ask for application search string
     app_search = input("What application do you wish to modify?")
     # todo Can ask() support open-ended SMS responses?
-    # app_search = ask("What application do you wish to modify?")
+    # app_search = ask("What application do you wish to modify?", {
+    #                  "choices":"[ANY]",
+    #                  "timeout":30.0})
 
     app_names = get_applications(app_search)
     if len(app_names) == 1:
@@ -85,7 +88,8 @@ def main():
         while True:
             app_name = input("Multiple applications matched your search. Which app would you like to modify? Chose: "+app_string)
             # app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
-            #                "choices":app_string)
+            #                "choices":app_string
+            #                "timeout":30.0})
 
             if app_name not in app_names:
                 print("Application name is not valid")
@@ -106,7 +110,8 @@ def main():
     while True:
         target_relevance = input("What relevance would you like to set? Chose: " + relevance_string)
         # target_relevance = ask("What relevance would you like to set? Chose: "+relevance_string, {
-        #                        "choices":relevance_string})
+        #                        "choices":relevance_string,
+        #                        "timeout":30.0})
         if target_relevance not in valid_relevance:
             print("Sorry, specified relevance level is not valid")
             # say("Sorry, specified relevance level is not valid")
@@ -125,3 +130,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+    #hangup()

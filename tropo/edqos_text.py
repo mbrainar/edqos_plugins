@@ -1,4 +1,6 @@
 import requests
+import sys
+import json
 
 app_url = "http://edqos-dev.apps.imapex.io"
 
@@ -34,59 +36,92 @@ def set_relevance(app_name, policy_scope, target_relevance):
     elif target_relevance not in valid_relevance:
         return "Invalid or missing target relevance"
     else:
-        payload = "app={}&policy={}&relevance={}".format(app_name, policy_scope, target_relevance)
+        payload = {"app":app_name,
+                   "policy": policy_scope,
+                   "relevance":target_relevance
+                   }
         r = requests.post(app_url+"/api/relevance/", data=payload)
-        if r.status_code == 200
+        if r.status_code == 200:
             return r.json()
 
-# Welcome message
-print("Welcome to the Event Driven QoS Tropo Plugin")
-# say("Welcome to the Event Driven QoS Tropo Plugin")
 
-# Get policy tags
-policy_tags = get_policy_tags()
+def main():
+    # Welcome message
+    print("Welcome to the Event Driven QoS Tropo Plugin")
+    # say("Welcome to the Event Driven QoS Tropo Plugin")
 
-# Create string of policy tags
-policy_string = ', '.join(policy_tags)
+    # Get policy tags
+    policy_tags = get_policy_tags()
+    if not policy_tags:
+        sys.exit("Unable to get policy tags")
+    elif len(policy_tags) == 0:
+        sys.exit("No policy tags defined in APIC EM")
 
-while True:
-    # Ask what policy tag to use
-    policy_scope = input("What Policy Tag should we use? Chose: "+policy_string)
-    # policy_scope = ask("What Policy Tag should we use? Chose: "+policy_string, {
-    #     "choices":policy_string})
+    # Create string of policy tags
+    policy_string = ', '.join(policy_tags)
 
-    if policy_scope not in policy_tags:
-        print("Policy scope provided is not valid")
-        # say("Policy scope provided is not valid")
-    else:
-        break
-
-
-# Ask for application search string
-app_search = input("What application do you wish to modify?")
-# Can ask() support open-ended SMS responses?
-# app_search = ask("What application do you wish to modify?")
-
-app_names = get_applications(app_search)
-if len(app_names) == 1:
-    print("{} is currently listed as {}".format(app_names[0], get_relevance(app_names[0], policy_scope)))
-    # say("{} is currently listed as {}".format(app_names[0], get_relevance(app_names[0], policy_scope)))
-elif len(app_names) > 1:
-    app_string = ', '.join(app_names)
     while True:
-        app_name = input("Multiple applications matched your search. Which app would you like to modify? Chose: "+app_string)
-        # app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
-        #                "choices":app_string)
+        # Ask what policy tag to use
+        policy_scope = input("What Policy Tag should we use? Chose: "+policy_string)
+        # policy_scope = ask("What Policy Tag should we use? Chose: "+policy_string, {
+        #                    "choices":policy_string})
 
-        if app_name not in app_names:
-            print("Application name is not valid")
-            # say("Application name is not valid")
+        if policy_scope not in policy_tags:
+            print("Policy scope provided is not valid")
+            # say("Policy scope provided is not valid")
         else:
             break
 
+    # Ask for application search string
+    app_search = input("What application do you wish to modify?")
+    # todo Can ask() support open-ended SMS responses?
+    # app_search = ask("What application do you wish to modify?")
+
+    app_names = get_applications(app_search)
+    if len(app_names) == 1:
+        app_name = app_names[0]
+    elif len(app_names) > 1:
+        app_string = ', '.join(app_names)
+        while True:
+            app_name = input("Multiple applications matched your search. Which app would you like to modify? Chose: "+app_string)
+            # app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
+            #                "choices":app_string)
+
+            if app_name not in app_names:
+                print("Application name is not valid")
+                # say("Application name is not valid")
+            else:
+                break
+    else:
+        print("Sorry, no applications matched your search")
+        # say("Sorry, no applications matched your search")
+
+    # Print current relevance
     print("{} is currently listed as {}".format(app_name, get_relevance(app_name, policy_scope)))
     # say("{} is currently listed as {}".format(app_name, get_relevance(app_name, policy_scope)))
-else:
-    print("Sorry, no applications matched your search")
-    # say("Sorry, no applications matched your search")
 
+    # Ask what relevance we want to set
+    valid_relevance = ["Business-Relevant", "Default", "Business-Irrelevant"]
+    relevance_string = ', '.join(valid_relevance)
+    while True:
+        target_relevance = input("What relevance would you like to set? Chose: " + relevance_string)
+        # target_relevance = ask("What relevance would you like to set? Chose: "+relevance_string, {
+        #                        "choices":relevance_string})
+        if target_relevance not in valid_relevance:
+            print("Sorry, specified relevance level is not valid")
+            # say("Sorry, specified relevance level is not valid")
+        else:
+            break
+
+    # Reset relevance
+    relevance_task = set_relevance(app_name, policy_scope, target_relevance)
+    if relevance_task:
+        print("Policy change was successful. {} is now set to {}".format(app_name, target_relevance))
+        # say("Policy change was successful. {} is now set to {}".format(app_name, target_relevance))
+    else:
+        print("Sorry, there was a problem changing the policy.")
+        # say("Sorry, there was a problem changing the policy.")
+
+
+if __name__ == '__main__':
+    sys.exit(main())

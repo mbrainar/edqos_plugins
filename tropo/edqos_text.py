@@ -73,20 +73,19 @@ def main():
     # Create string of policy tags
     policy_string = ', '.join(policy_tags)
 
-    while True:
-        # Ask what policy tag to use
-        if tropo is True:
-            policy_scope = ask("What Policy Tag should we use? Chose: "+policy_string, {
-                               "choices":policy_string,
-                               "timeout":30.0})
-        else:
-            policy_scope = raw_input("What Policy Tag should we use? Chose: " + policy_string)
+    # Ask what policy tag to use
+    if tropo is True:
+        policy_scope = ask("What Policy Tag should we use? Chose: "+policy_string, {
+                           "choices":policy_string,
+                           "timeout":30.0})
+    else:
+        policy_scope = raw_input("What Policy Tag should we use? Chose: " + policy_string)
 
-        if policy_scope not in policy_tags:
-            print("Policy scope provided is not valid")
-            say("Policy scope provided is not valid") if tropo is True else None
-        else:
-            break
+    if policy_scope not in policy_tags:
+        print("Policy scope provided is not valid")
+        say("Policy scope provided is not valid") if tropo is True else None
+        sys.exit("Exiting")
+
 
     # Ask for application search string
     # todo Can ask() support open-ended SMS responses?
@@ -102,20 +101,18 @@ def main():
         app_name = app_names[0]
     elif len(app_names) > 1:
         app_string = ', '.join(app_names)
-        while True:
-            if tropo is True:
-                app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
-                               "choices":app_string,
-                               "timeout":30.0})
-            else:
-                app_name = raw_input(
-                    "Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string)
+        if tropo is True:
+            app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
+                           "choices":app_string,
+                           "timeout":30.0})
+        else:
+            app_name = raw_input(
+                "Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string)
 
-            if app_name not in app_names:
-                print("Application name is not valid")
-                say("Application name is not valid") if tropo is True else None
-            else:
-                break
+        if app_name not in app_names:
+            print("Application name is not valid")
+            say("Application name is not valid") if tropo is True else None
+            sys.exit("Exiting")
     else:
         print("Sorry, no applications matched your search")
         say("Sorry, no applications matched your search") if tropo is True else None
@@ -128,18 +125,16 @@ def main():
     # Ask what relevance we want to set
     valid_relevance = ["Business-Relevant", "Default", "Business-Irrelevant"]
     relevance_string = ', '.join(valid_relevance)
-    while True:
-        if tropo is True:
-            target_relevance = ask("What relevance would you like to set? Chose: "+relevance_string, {
-                                   "choices":relevance_string,
-                                   "timeout":30.0})
-        else:
-            target_relevance = raw_input("What relevance would you like to set? Chose: " + relevance_string)
-        if target_relevance not in valid_relevance:
-            print("Sorry, specified relevance level is not valid")
-            say("Sorry, specified relevance level is not valid") if tropo is True else None
-        else:
-            break
+    if tropo is True:
+        target_relevance = ask("What relevance would you like to set? Chose: "+relevance_string, {
+                               "choices":relevance_string,
+                               "timeout":30.0})
+    else:
+        target_relevance = raw_input("What relevance would you like to set? Chose: " + relevance_string)
+    if target_relevance not in valid_relevance:
+        print("Sorry, specified relevance level is not valid")
+        say("Sorry, specified relevance level is not valid") if tropo is True else None
+        sys.exit("Exiting")
 
     # Reset relevance
     relevance_task = set_relevance(app_name, policy_scope, target_relevance)
@@ -154,5 +149,4 @@ def main():
         hangup()
 
 
-if __name__ == '__main__':
-    sys.exit(main())
+main()

@@ -1,5 +1,9 @@
-import urllib.request
-import urllib.parse
+"""
+Tropo Scripting API uses Python 2; tested with Python 2.7.10
+"""
+
+import urllib
+import urllib2
 import sys
 import json
 
@@ -7,21 +11,19 @@ app_url = "http://edqos-dev.apps.imapex.io"
 tropo = False
 
 def get_policy_tags():
-    with urllib.request.urlopen(app_url+"/api/policy_tags/") as r:
-        response = r.read()
-        encoding = r.info().get_content_charset('utf-8')
-        JSON_object = json.loads(response.decode(encoding))
-        return JSON_object
+    r = urllib2.urlopen(app_url+"/api/policy_tags/")
+    response = r.read()
+    JSON_object = json.loads(response)
+    return JSON_object
 
 def get_applications(search):
     if not search:
         return "Missing search string"
     else:
-        with urllib.request.urlopen(app_url + "/api/applications/?search="+search) as r:
-            response = r.read()
-            encoding = r.info().get_content_charset('utf-8')
-            JSON_object = json.loads(response.decode(encoding))
-            return JSON_object
+        r = urllib2.urlopen(app_url + "/api/applications/?search="+search)
+        response = r.read()
+        JSON_object = json.loads(response)
+        return JSON_object
 
 def get_relevance(app_name, policy_scope):
     if not app_name:
@@ -29,11 +31,10 @@ def get_relevance(app_name, policy_scope):
     elif not policy_scope:
         return "Missing policy tag"
     else:
-        with urllib.request.urlopen(app_url + "/api/relevance/?app="+app_name+"&policy="+policy_scope) as r:
-            response = r.read()
-            encoding = r.info().get_content_charset('utf-8')
-            JSON_object = json.loads(response.decode(encoding))
-            return JSON_object
+        r = urllib2.urlopen(app_url + "/api/relevance/?app="+app_name+"&policy="+policy_scope)
+        response = r.read()
+        JSON_object = json.loads(response)
+        return JSON_object
 
 def set_relevance(app_name, policy_scope, target_relevance):
     valid_relevance = ["Business-Relevant", "Default", "Business-Irrelevant"]
@@ -44,13 +45,12 @@ def set_relevance(app_name, policy_scope, target_relevance):
     elif target_relevance not in valid_relevance:
         return "Invalid or missing target relevance"
     else:
-        data = urllib.parse.urlencode({'app': app_name, 'policy': policy_scope, 'relevance': target_relevance})
+        data = urllib.urlencode({'app': app_name, 'policy': policy_scope, 'relevance': target_relevance})
         data = data.encode('ascii')
-        with urllib.request.urlopen(app_url+"/api/relevance/", data) as r:
-            response = r.read()
-            encoding = r.info().get_content_charset('utf-8')
-            JSON_object = json.loads(response.decode(encoding))
-            return JSON_object
+        r = urllib2.urlopen(app_url+"/api/relevance/", data)
+        response = r.read()
+        JSON_object = json.loads(response)
+        return JSON_object
 
 
 def main():
@@ -75,7 +75,7 @@ def main():
                                "choices":policy_string,
                                "timeout":30.0})
         else:
-            policy_scope = input("What Policy Tag should we use? Chose: " + policy_string)
+            policy_scope = raw_input("What Policy Tag should we use? Chose: " + policy_string)
 
         if policy_scope not in policy_tags:
             print("Policy scope provided is not valid")
@@ -90,7 +90,7 @@ def main():
                          "choices":"[ANY]",
                          "timeout":30.0})
     else:
-        app_search = input("What application do you wish to modify?")
+        app_search = raw_input("What application do you wish to modify?")
 
     app_names = get_applications(app_search)
     if len(app_names) == 1:
@@ -103,7 +103,7 @@ def main():
                                "choices":app_string,
                                "timeout":30.0})
             else:
-                app_name = input(
+                app_name = raw_input(
                     "Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string)
 
             if app_name not in app_names:
@@ -129,7 +129,7 @@ def main():
                                    "choices":relevance_string,
                                    "timeout":30.0})
         else:
-            target_relevance = input("What relevance would you like to set? Chose: " + relevance_string)
+            target_relevance = raw_input("What relevance would you like to set? Chose: " + relevance_string)
         if target_relevance not in valid_relevance:
             print("Sorry, specified relevance level is not valid")
             say("Sorry, specified relevance level is not valid") if tropo is True else None

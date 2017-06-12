@@ -52,6 +52,11 @@ def set_relevance(app_name, policy_scope, target_relevance):
         JSON_object = json.loads(response)
         return JSON_object
 
+def bad_choice_function(event):
+    print("Something went wrong")
+    say("Sorry, something went wrong.") if tropo is True else None
+    sys.exit("Exiting")
+
 
 def main():
     if tropo is True:
@@ -77,7 +82,9 @@ def main():
     if tropo is True:
         policy_scope = ask("What Policy Tag should we use? Chose: "+policy_string, {
                            "choices":policy_string,
-                           "timeout":30.0})
+                           "timeout":180.0,
+                           "interdigitTimeout":30.0,
+                           "onBadChoice":bad_choice_func})
     else:
         policy_scope = raw_input("What Policy Tag should we use? Chose: " + policy_string)
 
@@ -92,7 +99,8 @@ def main():
     if tropo is True:
         app_search = ask("What application do you wish to modify?", {
                          "choices":"[ANY]",
-                         "timeout":30.0})
+                         "timeout":180.0,
+                         "interdigitTimeout":30.0})
     else:
         app_search = raw_input("What application do you wish to modify?")
 
@@ -104,7 +112,9 @@ def main():
         if tropo is True:
             app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
                            "choices":app_string,
-                           "timeout":30.0})
+                           "timeout":180.0,
+                           "interdigitTimeout":30.0,
+                           "onBadChoice": bad_choice_func})
         else:
             app_name = raw_input(
                 "Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string)
@@ -128,7 +138,9 @@ def main():
     if tropo is True:
         target_relevance = ask("What relevance would you like to set? Chose: "+relevance_string, {
                                "choices":relevance_string,
-                               "timeout":30.0})
+                               "timeout":180.0,
+                               "interdigitTimeout":30.0,
+                               "onBadChoice": bad_choice_func})
     else:
         target_relevance = raw_input("What relevance would you like to set? Chose: " + relevance_string)
     if target_relevance not in valid_relevance:

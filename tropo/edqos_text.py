@@ -1,21 +1,27 @@
 import requests
+import urllib.request
+import urllib.parse
 import sys
 import json
 
 app_url = "http://edqos-dev.apps.imapex.io"
 
 def get_policy_tags():
-    r = requests.get(app_url+"/api/policy_tags/")
-    if r.status_code == 200:
-        return r.json()
-    
+    with urllib.request.urlopen(app_url+"/api/policy_tags/") as r:
+        response = r.read()
+        encoding = r.info().get_content_charset('utf-8')
+        JSON_object = json.loads(response.decode(encoding))
+        return JSON_object
+
 def get_applications(search):
     if not search:
         return "Missing search string"
     else:
-        r = requests.get(app_url+"/api/applications/?search="+search)
-        if r.status_code == 200:
-            return r.json()
+        with urllib.request.urlopen(app_url + "/api/applications/?search="+search) as r:
+            response = r.read()
+            encoding = r.info().get_content_charset('utf-8')
+            JSON_object = json.loads(response.decode(encoding))
+            return JSON_object
 
 def get_relevance(app_name, policy_scope):
     if not app_name:
@@ -23,9 +29,11 @@ def get_relevance(app_name, policy_scope):
     elif not policy_scope:
         return "Missing policy tag"
     else:
-        r = requests.get(app_url+"/api/relevance/?app="+app_name+"&policy="+policy_scope)
-        if r.status_code == 200:
-            return r.text
+        with urllib.request.urlopen(app_url + "/api/relevance/?app="+app_name+"&policy="+policy_scope) as r:
+            response = r.read()
+            encoding = r.info().get_content_charset('utf-8')
+            JSON_object = json.loads(response.decode(encoding))
+            return JSON_object
 
 def set_relevance(app_name, policy_scope, target_relevance):
     valid_relevance = ["Business-Relevant", "Default", "Business-Irrelevant"]
@@ -36,13 +44,13 @@ def set_relevance(app_name, policy_scope, target_relevance):
     elif target_relevance not in valid_relevance:
         return "Invalid or missing target relevance"
     else:
-        payload = {"app":app_name,
-                   "policy": policy_scope,
-                   "relevance":target_relevance
-                   }
-        r = requests.post(app_url+"/api/relevance/", data=payload)
-        if r.status_code == 200:
-            return r.json()
+        data = urllib.parse.urlencode({'app': app_name, 'policy': policy_scope, 'relevance': target_relevance})
+        data = data.encode('ascii')
+        with urllib.request.urlopen(app_url+"/api/relevance/", data) as r:
+            response = r.read()
+            encoding = r.info().get_content_charset('utf-8')
+            JSON_object = json.loads(response.decode(encoding))
+            return JSON_object
 
 
 def main():
@@ -99,6 +107,7 @@ def main():
     else:
         print("Sorry, no applications matched your search")
         # say("Sorry, no applications matched your search")
+        sys.exit("No applications matched search")
 
     # Print current relevance
     print("{} is currently listed as {}".format(app_name, get_relevance(app_name, policy_scope)))

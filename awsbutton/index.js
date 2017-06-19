@@ -64,7 +64,7 @@ exports.handler = (event, context, callback) => {
               answer = false;
             }
           } );
-    };
+    }
 
     if (answer) {
       callback(null, 'Successfully changed state.');

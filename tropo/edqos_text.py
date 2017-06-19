@@ -62,6 +62,7 @@ def main():
     if tropo is True:
         if len(currentCall.initialText) > 0:
             # Welcome message
+            log("Incoming call")
             say("Welcome to the Event Driven QoS Tropo Plugin")
         else:
             sys.exit("No incoming message")
@@ -76,7 +77,7 @@ def main():
         sys.exit("No policy tags defined in APIC EM")
 
     # Create string of policy tags
-    policy_string = ', '.join(policy_tags)
+    policy_string = "\""+', '.join(policy_tags)+"\""
 
     # Ask what policy tag to use
     if tropo is True:
@@ -84,7 +85,8 @@ def main():
                            "choices":policy_string,
                            "timeout":180.0,
                            "interdigitTimeout":30.0,
-                           "onBadChoice":bad_choice_func})
+                           "onBadChoice":bad_choice_function})
+        log(policy_scope)
     else:
         policy_scope = raw_input("What Policy Tag should we use? Chose: " + policy_string)
 
@@ -108,13 +110,13 @@ def main():
     if len(app_names) == 1:
         app_name = app_names[0]
     elif len(app_names) > 1:
-        app_string = ', '.join(app_names)
+        app_string = "\""+', '.join(app_names)+"\""
         if tropo is True:
             app_name = ask("Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string, {
                            "choices":app_string,
                            "timeout":180.0,
                            "interdigitTimeout":30.0,
-                           "onBadChoice": bad_choice_func})
+                           "onBadChoice": bad_choice_function})
         else:
             app_name = raw_input(
                 "Multiple applications matched your search. Which app would you like to modify? Chose: " + app_string)
@@ -140,7 +142,7 @@ def main():
                                "choices":relevance_string,
                                "timeout":180.0,
                                "interdigitTimeout":30.0,
-                               "onBadChoice": bad_choice_func})
+                               "onBadChoice": bad_choice_function})
     else:
         target_relevance = raw_input("What relevance would you like to set? Chose: " + relevance_string)
     if target_relevance not in valid_relevance:

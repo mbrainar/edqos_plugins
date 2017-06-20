@@ -7,7 +7,7 @@ import urllib2
 import sys
 import json
 
-app_url = "http://edqos-dev.apps.imapex.io"
+app_url = "http://edqos.apps.imapex.io"
 tropo = False
 
 def get_policy_tags():

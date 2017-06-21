@@ -120,7 +120,7 @@ def set_relevance_intent(intent, session):
     reprompt_text = None
 
     if 'app' in intent['slots']:
-        app_name = intent['slots']['app']['value']
+        app_name = intent['slots']['app']['value'].lower()
     if 'relevance' in intent['slots']:
         if intent['slots']['relevance']['value'] == "business relevant":
             relevance = "Business-Relevant"
@@ -162,7 +162,7 @@ def get_relevance_intent(intent, session):
     reprompt_text = None
 
     if 'app' in intent['slots']:
-        app_name = intent['slots']['app']['value']
+        app_name = intent['slots']['app']['value'].lower()
 
     relevance = get_relevance(app_name, os.getenv("scope"))
 

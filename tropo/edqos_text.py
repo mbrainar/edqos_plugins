@@ -8,6 +8,8 @@ import sys
 import json
 
 app_url = "http://edqos.apps.imapex.io"
+
+# Change me to True if you are deploying/testing on Tropo
 tropo = False
 
 def get_policy_tags():
